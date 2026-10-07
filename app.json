@@ -1,25 +1,59 @@
 {
   "expo": {
-    "name": "one-more-try",
+    "name": "PulseTap: One More Try",
     "slug": "one-more-try",
-    "version": "1.0.0",
-    "orientation": "portrait",
+    "version": "1.0.2",
+    "orientation": "default",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "scheme": "onemoretry",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B0F19"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.onemoretry.game"
     },
     "android": {
+      "package": "com.onemoretry.game",
+      "versionCode": 3,
+      "supportsTablet": true,
+      "supportsMultiWindow": true,
+      "edgeToEdge": true,
+      "enableProguardInReleaseBuilds": true,
+      "enableShrinkResourcesInReleaseBuilds": true,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0F172A",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-8540104953749120~6336194627",
+          "iosAppId": "ca-app-pub-8540104953749120~6336194627"
+        }
+      ],
+      "expo-splash-screen"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2f905ba3-7651-45fc-b645-02e5759dc203"
+      }
     }
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-8540104953749120~6336194627",
+    "ios_app_id": "ca-app-pub-8540104953749120~6336194627"
   }
 }

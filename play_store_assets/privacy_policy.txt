@@ -1,0 +1,27 @@
+Privacy Policy for PulseTap: One More Try
+Last Updated: September 25, 2026
+
+1. Introduction
+PulseTap: One More Try ("we", "our", or "the Game") is a reflex arcade mobile application. We respect your privacy and are committed to protecting any information associated with your use of our application.
+
+2. Information Collection and Storage
+• Offline-First Design: Game progress, high scores, streaks, levels, and user settings (sound/haptics toggles) are stored locally on your device via secure on-device storage. We do not operate custom backend servers and do not maintain accounts, passwords, or personal profiles.
+• No Personal Data Collection: We do not collect names, email addresses, phone numbers, or physical locations.
+
+3. Advertising & Analytics
+The Game uses Google AdMob (a service provided by Google LLC) to serve advertisements:
+• Google Mobile Ads SDK may collect advertising identifiers (such as Android Advertising ID), device information, and non-personal usage telemetry to deliver contextual or personalized advertisements in accordance with Google's Privacy Policy: https://policies.google.com/privacy
+• Rewarded video ads are strictly optional and only triggered when you explicitly choose to watch an ad to revive your game session.
+
+4. Children’s Privacy
+PulseTap: One More Try does not knowingly collect personally identifiable information from children under the age of 13. The application is designed to be family-safe and suitable for general audiences.
+
+5. Data Security
+Because all your game data is stored directly on your device, you can delete all local data at any time by clearing the application cache/data in Android Settings or using the "Reset All Stats" option in the in-game Settings menu.
+
+6. Changes to This Privacy Policy
+We may update our Privacy Policy periodically. Any updates will be posted on this document with an updated "Last Updated" date.
+
+7. Contact Us
+If you have any questions or feedback regarding this Privacy Policy, please contact us at:
+support@onemoretry.game

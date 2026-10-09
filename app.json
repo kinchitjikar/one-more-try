@@ -2,7 +2,7 @@
   "expo": {
     "name": "PulseTap: One More Try",
     "slug": "one-more-try",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "scheme": "onemoretry",
@@ -18,7 +18,7 @@
     },
     "android": {
       "package": "com.onemoretry.game",
-      "versionCode": 3,
+      "versionCode": 5,
       "supportsTablet": true,
       "supportsMultiWindow": true,
       "edgeToEdge": true,
@@ -43,7 +43,16 @@
           "iosAppId": "ca-app-pub-8540104953749120~6336194627"
         }
       ],
-      "expo-splash-screen"
+      "expo-splash-screen",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ]
     ],
     "extra": {
       "router": {},

@@ -48,6 +48,18 @@ class HapticsService {
   }
 
   /**
+   * Success notification feedback pattern on setting a new High Score record
+   */
+  public triggerHighScoreSuccess(): void {
+    if (!this.enabled) return;
+    try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch {
+      // Safely ignored
+    }
+  }
+
+  /**
    * Light selection tap for UI buttons
    */
   public triggerButtonPress(): void {

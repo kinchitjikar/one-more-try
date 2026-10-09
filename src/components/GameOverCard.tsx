@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 import { COLORS } from '../constants/config';
 import { PlayButton } from './PlayButton';
 import { RewardedContinue } from './RewardedContinue';
 import { GameOverReason } from '../game/types';
+import { HighScoreCelebration } from './HighScoreCelebration';
 
 interface GameOverCardProps {
   score: number;
@@ -36,6 +37,96 @@ export const GameOverCard: React.FC<GameOverCardProps> = ({
   const [isPlayAgainReady, setIsPlayAgainReady] = useState(!canContinue);
   const fadeAnim = useRef(new Animated.Value(canContinue ? 0.4 : 1)).current;
 
+  // Animated Card Entrance
+  const cardScale = useRef(new Animated.Value(0.85)).current;
+  const cardOpacity = useRef(new Animated.Value(0)).current;
+
+  // Score Ticker Animation
+  const [displayScore, setDisplayScore] = useState<number>(isNewHighScore ? 0 : score);
+
+  // New Best Badge Pulse
+  const badgePulse = useRef(new Animated.Value(1)).current;
+  const badgeGlowOpacity = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    // Card Entrance Spring Animation
+    Animated.parallel([
+      Animated.spring(cardScale, {
+        toValue: 1,
+        friction: 6,
+        tension: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardOpacity, {
+        toValue: 1,
+        duration: 350,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Score ticker animation for High Score
+    if (isNewHighScore && score > 0) {
+      let startTimestamp: number | null = null;
+      const duration = 1200; // 1.2s count up
+      let frameId: number;
+
+      const step = (timestamp: number) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        // Easing out cubic for satisfying slowdown at end
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        setDisplayScore(Math.floor(easedProgress * score));
+
+        if (progress < 1) {
+          frameId = requestAnimationFrame(step);
+        } else {
+          setDisplayScore(score);
+        }
+      };
+
+      frameId = requestAnimationFrame(step);
+      return () => cancelAnimationFrame(frameId);
+    } else {
+      setDisplayScore(score);
+    }
+  }, [cardOpacity, cardScale, isNewHighScore, score]);
+
+  useEffect(() => {
+    if (isNewHighScore) {
+      // Continuous badge pulse & glowing aura loop
+      Animated.loop(
+        Animated.parallel([
+          Animated.sequence([
+            Animated.timing(badgePulse, {
+              toValue: 1.08,
+              duration: 700,
+              easing: Easing.inOut(Easing.quad),
+              useNativeDriver: true,
+            }),
+            Animated.timing(badgePulse, {
+              toValue: 1.0,
+              duration: 700,
+              easing: Easing.inOut(Easing.quad),
+              useNativeDriver: true,
+            }),
+          ]),
+          Animated.sequence([
+            Animated.timing(badgeGlowOpacity, {
+              toValue: 1.0,
+              duration: 700,
+              useNativeDriver: true,
+            }),
+            Animated.timing(badgeGlowOpacity, {
+              toValue: 0.4,
+              duration: 700,
+              useNativeDriver: true,
+            }),
+          ]),
+        ])
+      ).start();
+    }
+  }, [badgeGlowOpacity, badgePulse, isNewHighScore]);
+
   useEffect(() => {
     if (canContinue) {
       setIsPlayAgainReady(false);
@@ -57,20 +148,51 @@ export const GameOverCard: React.FC<GameOverCardProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>GAME OVER</Text>
+      {/* High Score Explosion & Particle Celebration Overlay */}
+      {isNewHighScore && <HighScoreCelebration />}
+
+      <Animated.View
+        style={[
+          styles.card,
+          isNewHighScore && styles.cardHighScore,
+          {
+            transform: [{ scale: cardScale }],
+            opacity: cardOpacity,
+          },
+        ]}
+      >
+        <Text style={[styles.title, isNewHighScore && styles.titleHighScore]}>
+          {isNewHighScore ? 'NEW RECORD!' : 'GAME OVER'}
+        </Text>
         <Text style={styles.reasonText}>{reasonText}</Text>
 
         {isNewHighScore && (
-          <View style={styles.newBestBadge}>
+          <Animated.View
+            style={[
+              styles.newBestBadge,
+              {
+                transform: [{ scale: badgePulse }],
+              },
+            ]}
+          >
+            <Animated.View
+              style={[
+                styles.badgeGlow,
+                {
+                  opacity: badgeGlowOpacity,
+                },
+              ]}
+            />
             <Text style={styles.newBestText}>★ NEW BEST SCORE ★</Text>
-          </View>
+          </Animated.View>
         )}
 
         {/* Primary Score Summary */}
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreLabel}>FINAL SCORE</Text>
-          <Text style={styles.scoreValue}>{score.toLocaleString()}</Text>
+          <Text style={[styles.scoreValue, isNewHighScore && styles.scoreValueHighScore]}>
+            {displayScore.toLocaleString()}
+          </Text>
         </View>
 
         {/* Stats Grid */}
@@ -109,7 +231,7 @@ export const GameOverCard: React.FC<GameOverCardProps> = ({
             />
           </Animated.View>
         </View>
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -142,11 +264,26 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 12,
   },
+  cardHighScore: {
+    borderColor: COLORS.gold,
+    borderWidth: 2,
+    shadowColor: COLORS.gold,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 24,
+    elevation: 16,
+  },
   title: {
     fontSize: 26,
     fontWeight: '900',
     letterSpacing: 2.5,
     color: COLORS.accent,
+  },
+  titleHighScore: {
+    color: COLORS.gold,
+    textShadowColor: 'rgba(251, 191, 36, 0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 10,
   },
   reasonText: {
     fontSize: 12,
@@ -157,19 +294,26 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   newBestBadge: {
+    position: 'relative',
     backgroundColor: 'rgba(251, 191, 36, 0.15)',
     borderColor: COLORS.gold,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    borderRadius: 12,
+    borderWidth: 1.5,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 14,
     marginBottom: 16,
+    overflow: 'hidden',
+  },
+  badgeGlow: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: COLORS.gold,
   },
   newBestText: {
     color: COLORS.gold,
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '900',
-    letterSpacing: 1.2,
+    letterSpacing: 1.4,
+    zIndex: 2,
   },
   scoreContainer: {
     alignItems: 'center',
@@ -187,6 +331,12 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     letterSpacing: 0.5,
     marginTop: 2,
+  },
+  scoreValueHighScore: {
+    color: '#FACC15',
+    textShadowColor: 'rgba(250, 204, 21, 0.4)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 12,
   },
   statsGrid: {
     flexDirection: 'row',
